@@ -28,7 +28,6 @@
     #outcome {
       font-size: 3rem;
     }
-
   </style>
 </head>
 
@@ -73,7 +72,7 @@
     // ❗ Debug properly using the Console
 
     // 👉 CHALLENGE 1
-    function profileActivation() {
+    function profileActivation(profile, reason) {
       // 🧠 profileActivation takes two arguments, profile and reason, which are an object and a string respectively
       //  The reason arg is only used -and therefore required- to deactivate profiles, not to activate them
       //  The profile arg has an `active` property holding a Boolean value
@@ -85,10 +84,38 @@
       //    * If the profile is active but it has a `reason` prop, return the string "confirm status manually"
       //    * If the profile is **missing** an `active` prop, return the string "impossible to ascertain status"
       // 🌟 HINT: to confirm the existence of a prop, check that its value is not undefined
+      if (profile.active === true) {
+
+        if (profile.reason === undefined) {
+
+          profile.active = false
+          profile.reason = reason
+
+          return profile
+        }
+
+        profile.active = false
+        profile.reason = reason
+
+        return "confirm status manually"
+
+      } else if (profile.active === false) {
+
+        if (!profile.reason) {
+          return "confirm status manually"
+        }
+        profile.active = true
+        delete profile.reason
+
+      } else {
+        return "impossible to ascertain status"
+      }
+
+      return profile
     }
 
     // 👉 CHALLENGE 2
-    function mineSweeper() {
+    function mineSweeper(grid, x, y) {
       // 🧠 mineSweeper takes a grid as its first argument, and coordinates x and y as the second and third args
       //  The grid is an array of arrays in the following format: [["🟥","🟦","🟥"],["🟦","🟥","🟥"],["🟥","🟦","🟦"]]
       //  Each subarray is a row of the grid, the first subarray being the top row:
@@ -107,10 +134,22 @@
       //    * If the player lands on blue, return the string "🟦 🥳"
       // 🧠 Edge cases:
       //    * If the x or y coordinates are under 1 or over 3, return the string "invalid coordinates"
+      let posY = grid[y - 1]
+
+
+      if (x < 1 || y < 1 || x > 3 || y > 3) {
+        return "invalid coordinates"
+      } else {
+        if (posY[x - 1] === "🟥") {
+          return "🟥 💀"
+        } else {
+          return "🟦 🥳"
+        }
+      }
     }
 
     // 👉 CHALLENGE 3
-    function booleanize() {
+    function booleanize(args) {
       // 🧠 booleanize takes an object as its single argument, which can have any number of properties
       // Loop over the properties and then return the object, after applying the following transformations:
       //    * If a value is the number zero, it must be transformed into the Boolean false
@@ -119,10 +158,44 @@
       // 🧠 Edge cases:
       //    * If a property name exceeds 9 characters, return the string "shorten all prop names to 9 chars or less"
       // 🌟 HINT: careful not to perform any unintended changes on the object
+
+      for (let key in args) {
+
+        if (key.length > 9) {
+
+          return "shorten all prop names to 9 chars or less"
+
+        } else if (args[key] === null) {
+
+          delete args[key]
+
+        } else {
+
+          if (args[key] !== null) {
+
+            if (args[key] === 0) {
+
+              args[key] = false
+
+            } else if (args[key] === 1) {
+
+              args[key] = true
+
+            }
+
+          }
+
+        }
+
+      }
+
+
+      return args
+
     }
 
     // 👉 CHALLENGE 4
-    function scrub() {
+    function scrub(text, forbidden) {
       // 🧠 scrub takes a string "text" as its first argument, and an array of forbidden words "forbidden" as its second
       // Any word in the text included in the array of forbidden words is replaced with a word of equal length but made of lowcase "x"
       // The scrubbed text is then returned from the function, as seen in the examples below
@@ -133,11 +206,38 @@
       //    scrub("lost somewhere in time", []) // returns "lost somewhere in time"
       //    scrub("aces high", ["high", "aces", "hearts"]) // returns "xxxx xxxx"
       //    scrub("", ["high", "aces""]) // returns ""
+
       // 🌟 HINT: useful array methods to use are `push`, `indexOf`, `split`, `join`
+
+      let sentence = text.split(' ')
+
+
+      for (let i = 0; i < sentence.length; i++) {
+
+        for (let j = 0; j < forbidden.length; j++) {
+
+          if (sentence[i] === forbidden[j]) {
+
+            let newString = ''
+
+            for (let k = 0; k < sentence[i].length; k++) {
+              newString += 'x'
+            }
+
+            sentence[i] = newString
+
+          }
+
+        }
+
+      }
+
+      return sentence.join(' ')
+
     }
 
     // 👉 CHALLENGE 5
-    function normalizePhoneNumber() {
+    function normalizePhoneNumber(number) {
       // 🧠 normalizePhoneNumber takes a string as its only argument, representing a ten-digit number
       // The function returns a string formatted as seen below
       // 🧠 Examples of usage:
@@ -149,6 +249,32 @@
       // 🌟 HINT: instead of looping over the number's digits, loop backwards over a template "(XXX) XXX-XXXX"
       // 🌟 HINT: at each iteration, if the current character is an "X", replace it with the result of popping a digit from the number
       // 🌟 HINT: if you'd rather loop forwards, use `shift` instead of `pop`
+      let template = '(XXX) XXX-XXXX'
+      let phoneNumber = number.split('')
+      let result = ''
+      let hasNonNumber = phoneNumber.some(item => typeof item !== "number")
+
+
+      if (phoneNumber.length > 10 || phoneNumber.length < 10) {
+        return "type a 10-digit number"
+      }
+
+      for (let i = 0; i < phoneNumber.length; i++) {
+        if (phoneNumber[i] < '0' || phoneNumber[i] > '9') {
+          return "invalid phone number";
+        }
+      }
+
+      for (let char of template) {
+        if (char === "X") {
+          result += phoneNumber.shift()
+        } else {
+          result += char
+        }
+
+      }
+
+      return result
     }
 
     // 👉 CHALLENGE 6 (bonus, NOT graded)
@@ -159,6 +285,25 @@
       // 🌟 HINT: research using `Math.random` to obtain a number from 1 to 6
       // 🌟 HINT: use `while(true)` to throw the dice indefinitely, but avoid an infinite loop by making sure to break out eventually
       // 🌟 HINT: you need to keep track of the total number of throws, as well as how many sixes in a row
+
+      let totalThrows = 0;
+      let consecutiveSixes = 0;
+
+      while (true) {
+        totalThrows++;
+        let diceThrow = Math.floor(Math.random() * 6) + 1;
+
+        if (diceThrow === 6) {
+          consecutiveSixes++;
+          if (consecutiveSixes === 3) {
+            break;
+          }
+        } else {
+          consecutiveSixes = 0;
+        }
+      }
+
+      return totalThrows;
     }
 
     // 🧪 TESTS, do not make any changes below this line ===================
